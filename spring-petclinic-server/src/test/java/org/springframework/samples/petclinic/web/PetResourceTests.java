@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.model.Pet;
-import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,20 +44,20 @@ public class PetResourceTests {
                 .andExpect(jsonPath("$.type.id").value(6));
     }
 
-    private Pet setupPet() {Owner owner = new Owner();
+    private Pet setupPet() {Person owner = new Person();
         owner.setFirstName("George");
         owner.setLastName("Bush");
 
         Pet pet = new Pet();
 
         pet.setName("Basil");
-        pet.setId(2);
+        pet.setId(2L);
 
-        PetType petType = new PetType();
-        petType.setId(6);
-        pet.setType(petType);
+   /*     PetType petType = new PetType();
+        petType.setId(6L);*/
+       // pet.setType(petType);
 
-        owner.addPet(pet);
+      //  owner.addPet(pet);
         return pet;
     }
 }

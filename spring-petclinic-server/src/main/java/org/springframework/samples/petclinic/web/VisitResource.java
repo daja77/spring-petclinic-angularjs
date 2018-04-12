@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,8 +51,10 @@ public class VisitResource extends AbstractResourceController {
             @Valid @RequestBody Visit visit,
             @PathVariable("petId") int petId) {
 
-        clinicService.findPetById(petId).addVisit(visit);
+        Pet pet = clinicService.findPetById(petId);
+        pet.addVisit(visit);
         clinicService.saveVisit(visit);
+        clinicService.savePet(pet);
     }
 
     @GetMapping("/owners/{ownerId}/pets/{petId}/visits")

@@ -15,15 +15,19 @@
  */
 package org.springframework.samples.petclinic.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Juergen Hoeller
+ * @author Daniel Jahre
  * Can be Cat, Dog, Hamster...
  */
-@Entity
-@Table(name = "types")
-public class PetType extends NamedEntity {
 
+public class PetType {
+    @JsonProperty
+    String type;
+
+    public PetType(String type) {
+        this.type = type;
+    }
 }

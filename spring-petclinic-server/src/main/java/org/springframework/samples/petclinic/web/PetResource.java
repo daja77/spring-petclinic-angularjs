@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.ClinicService;
@@ -27,9 +27,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Size;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * @author Juergen Hoeller
@@ -48,7 +49,7 @@ public class PetResource extends AbstractResourceController {
 
     @GetMapping("/petTypes")
     Collection<PetType> getPetTypes() {
-        return clinicService.findPetTypes();
+        return clinicService.getPetTypes();
     }
 
     @PostMapping("/owners/{ownerId}/pets")
@@ -58,10 +59,8 @@ public class PetResource extends AbstractResourceController {
             @PathVariable("ownerId") int ownerId) {
 
         Pet pet = new Pet();
-        Owner owner = this.clinicService.findOwnerById(ownerId);
-        owner.addPet(pet);
-
-        save(pet, petRequest);
+        Person owner = this.clinicService.findOwnerById(ownerId);
+        save(pet, petRequest, owner);
     }
 
     @PutMapping("/owners/{ownerId}/pets/{petId}")
@@ -71,17 +70,20 @@ public class PetResource extends AbstractResourceController {
     }
 
     private void save(Pet pet, PetRequest petRequest) {
+        save(pet, petRequest, null);
+    }
+
+    private void save(Pet pet, PetRequest petRequest, Person owner) {
 
         pet.setName(petRequest.getName());
-        pet.setBirthDate(petRequest.getBirthDate());
-
-        for (PetType petType : clinicService.findPetTypes()) {
-            if (petType.getId() == petRequest.getTypeId()) {
-                pet.setType(petType);
-            }
-        }
+        pet.setBirthDate(LocalDate.from(petRequest.getBirthDate()));
+        pet.setType(petRequest.getTypeId());
 
         clinicService.savePet(pet);
+        if(owner != null) {
+            owner.addPet(pet);
+            clinicService.saveOwner(owner, null);
+        }
     }
 
     @GetMapping("/owners/*/pets/{petId}")
@@ -91,14 +93,14 @@ public class PetResource extends AbstractResourceController {
     }
 
     static class PetRequest {
-        int id;
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        Date birthDate;
+        long id;
+        @JsonFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSS[xxx][xx][X]")
+        LocalDateTime birthDate;
         @Size(min = 1)
         String name;
-        int typeId;
+        String typeId;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
@@ -106,11 +108,11 @@ public class PetResource extends AbstractResourceController {
             this.id = id;
         }
 
-        public Date getBirthDate() {
+        public LocalDateTime getBirthDate() {
             return birthDate;
         }
 
-        public void setBirthDate(Date birthDate) {
+        public void setBirthDate(LocalDateTime birthDate) {
             this.birthDate = birthDate;
         }
 
@@ -122,23 +124,23 @@ public class PetResource extends AbstractResourceController {
             this.name = name;
         }
 
-        public int getTypeId() {
+        public String getTypeId() {
             return typeId;
         }
 
-        public void setTypeId(int typeId) {
+        public void setTypeId(String typeId) {
             this.typeId = typeId;
         }
     }
 
     static class PetDetails {
 
-        int id;
+        long id;
         String name;
         String owner;
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-        Date birthDate;
-        PetType type;
+        LocalDate birthDate;
+        String type;
 
         PetDetails(Pet pet) {
             this.id = pet.getId();
@@ -148,7 +150,7 @@ public class PetResource extends AbstractResourceController {
             this.type = pet.getType();
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
@@ -160,11 +162,11 @@ public class PetResource extends AbstractResourceController {
             return owner;
         }
 
-        public Date getBirthDate() {
+        public LocalDate getBirthDate() {
             return birthDate;
         }
 
-        public PetType getType() {
+        public String getType() {
             return type;
         }
     }

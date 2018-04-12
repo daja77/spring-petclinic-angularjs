@@ -32,7 +32,7 @@ public class VetResourceTests {
     public void shouldGetAListOfVetsInJSonFormat() throws Exception {
 
         Vet vet = new Vet();
-        vet.setId(1);
+        vet.setId(1L);
 
         given(clinicService.findVets()).willReturn(Arrays.asList(vet));
 

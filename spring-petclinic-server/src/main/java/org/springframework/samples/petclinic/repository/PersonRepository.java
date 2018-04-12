@@ -15,23 +15,17 @@
  */
 package org.springframework.samples.petclinic.repository;
 
-import java.util.Collection;
-
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.Repository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.samples.petclinic.model.BaseEntity;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.data.neo4j.repository.Neo4jRepository;
+import org.springframework.samples.petclinic.model.Person;
 
 /**
  * Repository class for <code>Owner</code> domain objects All method names are compliant with Spring Data naming
- * conventions so this interface can easily be extended for Spring Data See here: http://static.springsource.org/spring-data/jpa/docs/current/reference/html/jpa.repositories.html#jpa.query-methods.query-creation
+ * conventions so this interface can easily be extended for Spring Data
  *
  * @author Ken Krebs
  * @author Juergen Hoeller
  * @author Sam Brannen
  * @author Michael Isvy
+ * @author Daniel Jahre
  */
-public interface OwnerRepository extends JpaRepository<Owner, Integer> { }
+public interface PersonRepository extends Neo4jRepository<Person, Long> { }

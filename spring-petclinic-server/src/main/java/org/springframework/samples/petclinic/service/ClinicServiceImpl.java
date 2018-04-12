@@ -18,7 +18,8 @@ package org.springframework.samples.petclinic.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.*;
-import org.springframework.samples.petclinic.repository.OwnerRepository;
+import org.springframework.samples.petclinic.repository.CityRepository;
+import org.springframework.samples.petclinic.repository.PersonRepository;
 import org.springframework.samples.petclinic.repository.PetRepository;
 import org.springframework.samples.petclinic.repository.VetRepository;
 import org.springframework.samples.petclinic.repository.VisitRepository;
@@ -26,7 +27,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.cache.annotation.CacheResult;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Mostly used as a facade for all Petclinic controllers
@@ -39,38 +43,59 @@ public class ClinicServiceImpl implements ClinicService {
 
     private PetRepository petRepository;
     private VetRepository vetRepository;
-    private OwnerRepository ownerRepository;
+    private PersonRepository personRepository;
     private VisitRepository visitRepository;
+    private CityRepository cityRepository;
 
     @Autowired
-    public ClinicServiceImpl(PetRepository petRepository, VetRepository vetRepository, OwnerRepository ownerRepository, VisitRepository visitRepository) {
+    public ClinicServiceImpl(PetRepository petRepository, VetRepository vetRepository,
+                             PersonRepository personRepository, VisitRepository visitRepository,
+                             CityRepository cityRepository) {
         this.petRepository = petRepository;
         this.vetRepository = vetRepository;
-        this.ownerRepository = ownerRepository;
+        this.personRepository = personRepository;
         this.visitRepository = visitRepository;
+        this.cityRepository = cityRepository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Collection<PetType> findPetTypes() throws DataAccessException {
-        return petRepository.findPetTypes();
+    public Collection<PetType> getPetTypes() throws DataAccessException {
+        HashMap<String, PetType> petTypes = new HashMap();
+        for (Collection<String> c : petRepository.getPetTypes()) {
+            for (String entry : c) {
+                if("BaseEntity".equals(entry) || "Pet".equals(entry)) {
+                    continue;
+                }
+                petTypes.put(entry, new PetType(entry));
+            }
+        }
+        return petTypes.values();
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Owner findOwnerById(int id) throws DataAccessException {
-        return ownerRepository.findById(id).get();
+    public Person findOwnerById(long id) throws DataAccessException {
+        return personRepository.findById(id).get();
     }
 
-    @Transactional(readOnly = true)
-    public Collection<Owner> findAll() throws DataAccessException {
-        return ownerRepository.findAll();
+    @Override
+    public Collection<Person> findAll() throws DataAccessException {
+        List<Person> personList = new ArrayList<>();
+        personRepository.findAll().forEach(personList::add);
+        return personList;
     }
 
     @Override
     @Transactional
-    public void saveOwner(Owner owner) throws DataAccessException {
-        ownerRepository.save(owner);
+    public void saveOwner(Person owner, String cityName) throws DataAccessException {
+        if(cityName != null) {
+            City city = cityRepository.findByName(cityName);
+            if (city == null) {
+                city = new City();
+                city.setName(cityName);
+            }
+            owner.setCity(city);
+        }
+        personRepository.save(owner);
     }
 
 
@@ -82,8 +107,7 @@ public class ClinicServiceImpl implements ClinicService {
 
 
     @Override
-    @Transactional(readOnly = true)
-    public Pet findPetById(int id) throws DataAccessException {
+    public Pet findPetById(long id) throws DataAccessException {
         return petRepository.findById(id);
     }
 
@@ -99,6 +123,5 @@ public class ClinicServiceImpl implements ClinicService {
     public Collection<Vet> findVets() throws DataAccessException {
         return vetRepository.findAll();
     }
-
 
 }

@@ -15,29 +15,40 @@
  */
 package org.springframework.samples.petclinic.model;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Simple JavaBean domain object representing an person.
+ * NodeEntity for Person
  *
- * @author Ken Krebs
+ * @author Daniel Jahre
  */
-@MappedSuperclass
-public class Person extends BaseEntity {
+@NodeEntity
+public class Person extends BaseEntity{
 
-    @Column(name = "first_name")
-    @NotEmpty
-    protected String firstName;
+    @Property(name = "firstname")
+    String firstName;
+    @Property(name = "lastname")
+    String lastName;
+    String address;
+    String telephone;
 
-    @Column(name = "last_name")
-    @NotEmpty
-    protected String lastName;
+    @Relationship(type="OWNS")
+    Set<Pet> pets = new HashSet<>();
 
+    @Relationship(type="LIVES_IN")
+    City city;
+
+    public void addPet(Pet pet) {
+        pets.add(pet);
+    }
     public String getFirstName() {
-        return this.firstName;
+        return firstName;
     }
 
     public void setFirstName(String firstName) {
@@ -45,12 +56,38 @@ public class Person extends BaseEntity {
     }
 
     public String getLastName() {
-        return this.lastName;
+        return lastName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    public String getAddress() {
+        return address;
+    }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public Set<Pet> getPets() {
+        return pets;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
 }

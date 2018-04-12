@@ -16,111 +16,46 @@
 package org.springframework.samples.petclinic.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
- * Simple JavaBean domain object representing a visit.
+ * NodeEntity for Visit
  *
- * @author Ken Krebs
+ * @author Daniel Jahre
  */
-@Entity
-@Table(name = "visits")
+@NodeEntity
 public class Visit extends BaseEntity {
 
     /**
      * Holds value of property date.
      */
-    @Column(name = "visit_date")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Property(name = "visit_date")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date date;
+    private LocalDate date;
 
     /**
      * Holds value of property description.
      */
-    @Size(max = 8192)
-    @Column(name = "description")
     private String description;
 
     /**
      * Holds value of property pet.
      */
-    @ManyToOne
-    @JoinColumn(name = "pet_id")
-    @JsonIgnore
+    @Relationship(type = "WAS_ON", direction = Relationship.INCOMING)
     private Pet pet;
 
+    @Relationship(type = "MEDICATED_ON", direction = Relationship.INCOMING)
+    private Vet vet;
 
-    /**
-     * Creates a new instance of Visit for the current date
-     */
-    public Visit() {
-        this.date = new Date();
-    }
-
-
-    /**
-     * Getter for property date.
-     *
-     * @return Value of property date.
-     */
-    public Date getDate() {
-        return this.date;
-    }
-
-    /**
-     * Setter for property date.
-     *
-     * @param date New value of property date.
-     */
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    /**
-     * Getter for property description.
-     *
-     * @return Value of property description.
-     */
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
-    /**
-     * Setter for property description.
-     *
-     * @param description New value of property description.
-     */
     public void setDescription(String description) {
         this.description = description;
     }
-
-    /**
-     * Getter for property pet.
-     *
-     * @return Value of property pet.
-     */
-    public Pet getPet() {
-        return this.pet;
-    }
-
-    /**
-     * Setter for property pet.
-     *
-     * @param pet New value of property pet.
-     */
-    public void setPet(Pet pet) {
-        this.pet = pet;
-    }
-
 }

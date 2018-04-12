@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,8 +54,8 @@ public class OwnerResource extends AbstractResourceController {
     public void setAllowedFields(WebDataBinder dataBinder) {
         dataBinder.setDisallowedFields("id");
     }
-    
-    private Owner retrieveOwner(int ownerId) {
+
+    private Person retrieveOwner(long ownerId) {
         return this.clinicService.findOwnerById(ownerId);
     }
 
@@ -64,42 +64,42 @@ public class OwnerResource extends AbstractResourceController {
      */
     @RequestMapping(value = "/owners", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOwner(@Valid @RequestBody Owner owner) {
-    	this.clinicService.saveOwner(owner);
+    public void createOwner(@Valid @RequestBody Person owner) {
+        String cityName = owner.getCity().getName();
+        owner.setCity(null);
+    	this.clinicService.saveOwner(owner, cityName);
     }
-    
+
     /**
      * Read single Owner
      */
     @RequestMapping(value = "/owners/{ownerId}", method = RequestMethod.GET)
-    public Owner findOwner(@PathVariable("ownerId") int ownerId) {
+    public Person findOwner(@PathVariable("ownerId") int ownerId) {
         return retrieveOwner(ownerId);
     }
-    
+
     /**
      * Read List of Owners
      */
     @GetMapping("/owners/list")
-    public Collection<Owner> findAll() {
+    public Collection<Person> findAll() {
         return clinicService.findAll();
     }
-    
+
     /**
      * Update Owner
      */
     @RequestMapping(value = "/owners/{ownerId}", method = RequestMethod.PUT)
-    public Owner updateOwner(@PathVariable("ownerId") int ownerId, @Valid @RequestBody Owner ownerRequest) {
-    	Owner ownerModel = retrieveOwner(ownerId);
+    public Person updateOwner(@PathVariable("ownerId") long ownerId, @Valid @RequestBody Person ownerRequest) {
+    	Person ownerModel = retrieveOwner(ownerId);
     	// This is done by hand for simplicity purpose. In a real life use-case we should consider using MapStruct.
     	ownerModel.setFirstName(ownerRequest.getFirstName());
     	ownerModel.setLastName(ownerRequest.getLastName());
-    	ownerModel.setCity(ownerRequest.getCity());
+    	//ownerModel.setCity(ownerRequest.getCity());
     	ownerModel.setAddress(ownerRequest.getAddress());
     	ownerModel.setTelephone(ownerRequest.getTelephone());
-        this.clinicService.saveOwner(ownerModel);
+        this.clinicService.saveOwner(ownerModel, ownerRequest.getCity().getName());
         return ownerModel;
     }
-
-
 
 }

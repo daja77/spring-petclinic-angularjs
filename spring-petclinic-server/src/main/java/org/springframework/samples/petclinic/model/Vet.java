@@ -15,65 +15,59 @@
  */
 package org.springframework.samples.petclinic.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.Labels;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlElement;
-
-import org.springframework.beans.support.MutableSortDefinition;
-import org.springframework.beans.support.PropertyComparator;
 
 /**
- * Simple JavaBean domain object representing a veterinarian.
+ * NodeEntity for Vets
  *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Arjen Poutsma
+ * @author Daniel Jahre
  */
-@Entity
-@Table(name = "vets")
-public class Vet extends Person {
+@NodeEntity
+public class Vet extends BaseEntity{
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"),
-            inverseJoinColumns = @JoinColumn(name = "specialty_id"))
-    private Set<Specialty> specialties;
+    @Labels
+    private List<String> labels = new ArrayList<>();
 
+    @Property(name = "firstname")
+    private String firstName;
+    @Property(name = "lastname")
+    private String lastName;
 
-    protected void setSpecialtiesInternal(Set<Specialty> specialties) {
-        this.specialties = specialties;
+    public List<String> getLabels() {
+        return labels;
     }
 
-    protected Set<Specialty> getSpecialtiesInternal() {
-        if (this.specialties == null) {
-            this.specialties = new HashSet<Specialty>();
-        }
-        return this.specialties;
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
     }
 
-    @XmlElement
-    public List<Specialty> getSpecialties() {
-        List<Specialty> sortedSpecs = new ArrayList<Specialty>(getSpecialtiesInternal());
-        PropertyComparator.sort(sortedSpecs, new MutableSortDefinition("name", true, true));
-        return Collections.unmodifiableList(sortedSpecs);
+    public String getFirstName() {
+        return firstName;
     }
 
-    public int getNrOfSpecialties() {
-        return getSpecialtiesInternal().size();
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public void addSpecialty(Specialty specialty) {
-        getSpecialtiesInternal().add(specialty);
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getSpecialties() {
+       return StringUtils.join(labels, ", ");
     }
 
 }

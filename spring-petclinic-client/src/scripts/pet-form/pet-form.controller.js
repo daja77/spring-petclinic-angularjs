@@ -15,7 +15,7 @@ angular.module('petForm')
                 $http.get("owners/" + ownerId + "/pets/" + petId).then(function (resp) {
                     self.pet = resp.data;
                     self.pet.birthDate = new Date(self.pet.birthDate);
-                    self.petTypeId = "" + self.pet.type.id;
+                    self.petTypeId = "" + self.pet.type;
                 });
             } else {
                 $http.get('owners/' + ownerId).then(function (resp) {

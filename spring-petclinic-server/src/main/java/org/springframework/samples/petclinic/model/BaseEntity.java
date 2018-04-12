@@ -15,37 +15,23 @@
  */
 package org.springframework.samples.petclinic.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 
 /**
- * Simple JavaBean domain object with an id property. Used as a base class for objects needing this property.
+ * BaseEntity for all the nodes
  *
- * @author Ken Krebs
- * @author Juergen Hoeller
+ * @author Daniel Jahre
  */
-@MappedSuperclass
 public class BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    @Id @GeneratedValue protected Long id;
 
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    @JsonIgnore
-    public boolean isNew() {
-        return (this.id == null);
+    public void setId(Long id) {
+        this.id = id;
     }
-
 }

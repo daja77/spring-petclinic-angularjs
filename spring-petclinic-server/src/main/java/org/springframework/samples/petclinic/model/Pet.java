@@ -16,98 +16,85 @@
 package org.springframework.samples.petclinic.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.beans.support.MutableSortDefinition;
-import org.springframework.beans.support.PropertyComparator;
+import org.neo4j.ogm.annotation.Labels;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Simple business object representing a pet.
+ * NodeEntity for Pet
  *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
+ * @author Daniel Jahre
  */
-@Entity
-@Table(name = "pets")
-public class Pet extends NamedEntity {
+@NodeEntity
+public class Pet extends BaseEntity {
 
-    @Column(name = "birth_date")
-    @Temporal(TemporalType.DATE)
-    private Date birthDate;
-
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private PetType type;
-
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
     @JsonIgnore
-    private Owner owner;
+    @Labels
+    List<String> labels = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet", fetch = FetchType.EAGER)
-    private Set<Visit> visits;
+    String name;
+
+    @Property(name = "birthdate")
+    LocalDate birthDate;
+
+    @JsonIgnore
+    @Relationship(type="OWNS", direction = Relationship.INCOMING)
+    private Person owner;
+
+    @Relationship(type = "WAS_ON")
+    private Set<Visit> visits = new HashSet<>();
 
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public Date getBirthDate() {
-        return this.birthDate;
-    }
-
-    public void setType(PetType type) {
-        this.type = type;
-    }
-
-    public PetType getType() {
-        return this.type;
-    }
-
-    protected void setOwner(Owner owner) {
-        this.owner = owner;
-    }
-
-    public Owner getOwner() {
-        return this.owner;
-    }
-
-    protected void setVisitsInternal(Set<Visit> visits) {
-        this.visits = visits;
-    }
-
-    protected Set<Visit> getVisitsInternal() {
-        if (this.visits == null) {
-            this.visits = new HashSet<Visit>();
-        }
-        return this.visits;
+    public void addVisit(Visit visit) {
+        visits.add(visit);
     }
 
     public List<Visit> getVisits() {
-        List<Visit> sortedVisits = new ArrayList<Visit>(getVisitsInternal());
-        PropertyComparator.sort(sortedVisits, new MutableSortDefinition("date", false, false));
-        return Collections.unmodifiableList(sortedVisits);
+        return new ArrayList<>(visits);
     }
 
-    public void addVisit(Visit visit) {
-        getVisitsInternal().add(visit);
-        visit.setPet(this);
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
+    }
+
+    public String getType() {
+        if(!labels.isEmpty()) return labels.get(0);
+        return "";
+    }
+
+    public void setType(String type) {
+        labels.clear();
+        labels.add(type);
+    }
 }
