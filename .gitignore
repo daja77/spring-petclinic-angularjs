@@ -12,3 +12,6 @@ target/
 
 # Branch switching
 generated/
+
+#database properties file
+**/db.properties
