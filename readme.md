@@ -1,7 +1,15 @@
-# AngularJS and Spring Boot version of the Spring PetClinic Sample Application [![Build Status](https://travis-ci.org/spring-petclinic/spring-petclinic-angularjs.svg?branch=master)](https://travis-ci.org/spring-petclinic/spring-petclinic-angularjs/)
+# AngularJS and Spring Boot and Neo4j version of the Spring PetClinic Sample Application [![Build Status](https://travis-ci.org/spring-petclinic/spring-petclinic-angularjs.svg?branch=master)](https://travis-ci.org/spring-petclinic/spring-petclinic-angularjs/)
+
+This is a fork of the AngularJS and Spring Boot version of the Spring Petclinic that used hsqldb and mysql databases.
+If you have any questions mail me at daja at linuxwochen.at or open up issues for this project.
+Please do not bother spring developers with questions, this is a personal fork to demonstrate the use
+of Neo4j with Spring Boot that is far away from being perfect.
 
 ## Understanding the Spring Petclinic application with a few diagrams
 <a href="https://speakerdeck.com/michaelisvy/spring-petclinic-sample-application">See the presentation here</a>
+
+## Using the Spring Pet Clinic with Neo4j database
+<a href="http://lospalmos.net/neo4j-talk-2018/#/">See the presentation here</a>
 
 ## Running petclinic locally
 ```
@@ -16,20 +24,12 @@ You can then access petclinic here: http://localhost:8080/
 
 <img width="782" alt="spring-petclinic" src="https://cloud.githubusercontent.com/assets/838318/19653851/61c1986a-9a16-11e6-8b94-03fd7f775bb3.png">
 
-## In case you find a bug/suggested improvement for Spring Petclinic
-Our issue tracker is available here: https://github.com/spring-petclinic/spring-petclinic-angularjs/issues
-
 ## Database configuration
 
-In its default configuration, Petclinic uses an in-memory database (HSQLDB) which
-gets populated at startup with data. A similar setup is provided for MySql in case a persistent database configuration is needed.
-Note that whenever the database type is changed, the data-access.properties file needs to be updated and the mysql-connector-java artifact from the pom.xml needs to be uncommented.
+You should setup your Neo4j database and enter the credentials into the db.properties file in the resources folder of the
+petclinic-server project. At the moment you have to manually execute the CYPHER queries in the petclinic.cypher text file
+on your Neo4j database. After that you can start up PetClinic as usual.  
 
-You may start a MySql database with docker:
-
-```
-docker run -e MYSQL_ROOT_PASSWORD=petclinic -e MYSQL_DATABASE=petclinic -p 3306:3306 mysql:5.7.8
-```
 
 ## Working with Petclinic in Eclipse/STS
 
@@ -80,7 +80,8 @@ this SpringBoot AngularJS Petclinic is splitted in 2 modules - a client module a
 | Common properties file        | [application.properties](spring-petclinic-server/src/main/resources/application.properties)  |
 | Development properties file   | [application-dev.properties](spring-petclinic-server/src/main/resources/application-dev.properties)  |
 | Production properties file    | [application-prod.properties](spring-petclinic-server/src/main/resources/application-prod.properties)  |
-| Caching: Cache with EhCache   | [CacheConfig.java](spring-petclinic-server/src/main/java/org/springframework/samples/petclinic/config/CacheConfig.java) |
+| Database configuration file   | [db.properties](spring-petclinic-server/src/main/resources/db.properties)  |
+| Database queries              | [petclinic.cypher](spring-petclinic-server/src/main/resources/petclinic.cypher)  |
 | Homepage                      | Map root context to the index.html template: [WebConfig.java](spring-petclinic-server/src/main/java/org/springframework/samples/petclinic/config/WebConfig.java) |
 
 
