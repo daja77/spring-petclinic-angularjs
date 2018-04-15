@@ -16,10 +16,12 @@
 package org.springframework.samples.petclinic.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,8 +33,11 @@ import java.util.Set;
 @NodeEntity
 public class Person extends BaseEntity{
 
+    @NotEmpty
     @Property(name = "firstname")
     String firstName;
+
+    @NotEmpty
     @Property(name = "lastname")
     String lastName;
     String address;
@@ -81,6 +86,15 @@ public class Person extends BaseEntity{
 
     public Set<Pet> getPets() {
         return pets;
+    }
+
+    //Test if pet by this name already exists
+    @JsonIgnore
+    public Pet getPet(String name) {
+        for (Pet pet : getPets()) {
+            if(pet.name.equals(name)) return pet;
+        }
+        return null;
     }
 
     public City getCity() {

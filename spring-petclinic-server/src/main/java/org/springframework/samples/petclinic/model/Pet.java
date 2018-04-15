@@ -76,6 +76,10 @@ public class Pet extends BaseEntity {
         this.birthDate = birthDate;
     }
 
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
     public Person getOwner() {
         return owner;
     }

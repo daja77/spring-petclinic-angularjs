@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,7 +42,7 @@ public class PetResourceTests {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.name").value("Basil"))
-                .andExpect(jsonPath("$.type.id").value(6));
+                .andExpect(jsonPath("$.type").value("Snake"));
     }
 
     private Pet setupPet() {Person owner = new Person();
@@ -53,11 +54,10 @@ public class PetResourceTests {
         pet.setName("Basil");
         pet.setId(2L);
 
-   /*     PetType petType = new PetType();
-        petType.setId(6L);*/
-       // pet.setType(petType);
+        pet.setType("Snake");
+        pet.setOwner(owner);
 
-      //  owner.addPet(pet);
+        owner.addPet(pet);
         return pet;
     }
 }

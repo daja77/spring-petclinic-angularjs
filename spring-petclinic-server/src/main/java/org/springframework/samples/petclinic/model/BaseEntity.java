@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 
@@ -33,5 +34,10 @@ public class BaseEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @JsonIgnore
+    public boolean isNew() {
+        return (this.id == null);
     }
 }
