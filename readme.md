@@ -81,7 +81,7 @@ this SpringBoot AngularJS Petclinic is splitted in 2 modules - a client module a
 | Development properties file   | [application-dev.properties](spring-petclinic-server/src/main/resources/application-dev.properties)  |
 | Production properties file    | [application-prod.properties](spring-petclinic-server/src/main/resources/application-prod.properties)  |
 | Database configuration file   | [db.properties](spring-petclinic-server/src/main/resources/db.properties)  |
-| Database queries              | [petclinic.cypher](spring-petclinic-server/src/main/resources/petclinic.cypher)  |
+| Database queries              | [petclinic.cypher](spring-petclinic-server/src/main/resources/db/neo4j/petclinic.cypher)  |
 | Homepage                      | Map root context to the index.html template: [WebConfig.java](spring-petclinic-server/src/main/java/org/springframework/samples/petclinic/config/WebConfig.java) |
 
 
